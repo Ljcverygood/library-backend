@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ljc.librarybackend.mapper.LendListMapper">
+
+    <select id="pageQuery" resultType="lendList">
+        select l.*, b.name
+        from
+        lend_list l left join book_info b on l.book_id=b.book_id
+        where l.is_deleted=0 and reader_id=#{readerId}
+        <if test="status==0">
+            and l.status=0
+        </if>
+        <if test="status==1">
+            and l.status=1
+        </if>
+        <if test="status==2">
+            and l.status=2
+        </if>
+        <if test="status==3">
+            and l.status=3
+        </if>
+order by l.lend_date desc
+
+    </select>
+
+
+    <select id="pageQueryInfo" resultType="lendList">
+        select l.*,b.name
+        from
+            lend_list l left join book_info b on l.book_id=b.book_id
+        where l.is_deleted=0 
+        <if test="readerId!=null">
+            and l.reader_id=#{readerId}
+        </if>
+        <if test="bookId!=null">
+            and l.book_id=#{bookId}
+        </if>
+        <if test="lookType==0">
+            and l.status=0
+        </if>
+        <if test="lookType==1">
+            and l.status=1
+        </if>
+        <if test="lookType==2">
+            and l.status=2
+        </if>
+        <if test="lookType==3">
+            and l.status=3
+        </if>
+        order by l.lend_date desc
+    </select>
+
+
+    <select id="mapQuery" resultType="lendList">
+        SELECT l.*,b.name,COUNT(l.book_id)  lendCount
+        FROM lend_list l left join book_info b on l.book_id=b.book_id WHERE l.lend_date>#{firstDay} and l.is_deleted=0 GROUP BY l.book_id ORDER BY lendCount DESC LIMIT 5
+    </select>
+
+</mapper>
